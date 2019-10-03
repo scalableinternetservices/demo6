@@ -5,11 +5,6 @@ class CommunitiesControllerTest < ActionDispatch::IntegrationTest
     @community = communities(:one)
   end
 
-  test "should get index" do
-    get communities_url
-    assert_response :success
-  end
-
   test "should get new" do
     get new_community_url
     assert_response :success
@@ -26,16 +21,6 @@ class CommunitiesControllerTest < ActionDispatch::IntegrationTest
   test "should show community" do
     get community_url(@community)
     assert_response :success
-  end
-
-  test "should get edit" do
-    get edit_community_url(@community)
-    assert_response :success
-  end
-
-  test "should update community" do
-    patch community_url(@community), params: { community: { name: @community.name } }
-    assert_redirected_to community_url(@community)
   end
 
   test "should destroy community" do
