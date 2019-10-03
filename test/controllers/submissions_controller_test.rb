@@ -28,21 +28,11 @@ class SubmissionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should get edit" do
-    get edit_submission_url(@submission)
-    assert_response :success
-  end
-
-  test "should update submission" do
-    patch submission_url(@submission), params: { submission: { community_id: @submission.community_id, title: @submission.title, url: @submission.url } }
-    assert_redirected_to submission_url(@submission)
-  end
-
   test "should destroy submission" do
     assert_difference('Submission.count', -1) do
       delete submission_url(@submission)
     end
 
-    assert_redirected_to submissions_url
+    assert_redirected_to root_url
   end
 end

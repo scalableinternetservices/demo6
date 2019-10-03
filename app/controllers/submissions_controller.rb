@@ -17,10 +17,6 @@ class SubmissionsController < ApplicationController
     @submission = Submission.new
   end
 
-  # GET /submissions/1/edit
-  def edit
-  end
-
   # POST /submissions
   # POST /submissions.json
   def create
@@ -37,26 +33,12 @@ class SubmissionsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /submissions/1
-  # PATCH/PUT /submissions/1.json
-  def update
-    respond_to do |format|
-      if @submission.update(submission_params)
-        format.html { redirect_to @submission, notice: 'Submission was successfully updated.' }
-        format.json { render :show, status: :ok, location: @submission }
-      else
-        format.html { render :edit }
-        format.json { render json: @submission.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
   # DELETE /submissions/1
   # DELETE /submissions/1.json
   def destroy
     @submission.destroy
     respond_to do |format|
-      format.html { redirect_to submissions_url, notice: 'Submission was successfully destroyed.' }
+      format.html { redirect_to root_url, notice: 'Submission was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
