@@ -6,7 +6,7 @@ class SubmissionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index" do
-    get submissions_url
+    get root_url
     assert_response :success
   end
 

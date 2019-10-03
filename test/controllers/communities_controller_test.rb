@@ -28,6 +28,6 @@ class CommunitiesControllerTest < ActionDispatch::IntegrationTest
       delete community_url(@community)
     end
 
-    assert_redirected_to communities_url
+    assert_redirected_to root_url
   end
 end
