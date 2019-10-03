@@ -1,4 +1,4 @@
 class Comment < ApplicationRecord
+  belongs_to :parent, class_name: 'Comment', optional: true
   belongs_to :submission
-  belongs_to :parent
 end
