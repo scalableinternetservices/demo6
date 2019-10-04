@@ -7,7 +7,7 @@ class CommunitiesControllerTest < ActionDispatch::IntegrationTest
 
   test "should get new" do
     get new_community_url
-    assert_response :success
+    assert_response :ok
   end
 
   test "should create community" do
@@ -20,7 +20,7 @@ class CommunitiesControllerTest < ActionDispatch::IntegrationTest
 
   test "should show community" do
     get community_url(@community)
-    assert_response :success
+    assert_response :ok
   end
 
   test "should destroy community" do

@@ -7,12 +7,12 @@ class SubmissionsControllerTest < ActionDispatch::IntegrationTest
 
   test "should get index" do
     get root_url
-    assert_response :success
+    assert_response :ok
   end
 
   test "should get new" do
     get new_submission_url
-    assert_response :success
+    assert_response :ok
   end
 
   test "should create submission" do
@@ -25,7 +25,7 @@ class SubmissionsControllerTest < ActionDispatch::IntegrationTest
 
   test "should show submission" do
     get submission_url(@submission)
-    assert_response :success
+    assert_response :ok
   end
 
   test "should destroy submission" do
