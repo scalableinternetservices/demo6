@@ -3,9 +3,9 @@
 one:
   message: MyText
   submission: one
-  parent: one
+  parent: nil
 
 two:
   message: MyText
   submission: two
-  parent: two
+  parent: nil

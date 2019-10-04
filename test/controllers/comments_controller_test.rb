@@ -12,7 +12,7 @@ class CommentsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create comment" do
     assert_difference('Comment.count') do
-      post comments_url, params: { comment: { message: @comment.message, parent_id: @comment.parent_id, submission_id: @comment.submission_id } }
+      post comments_url, params: { comment: { message: @comment.message, parent_id: @comment.id, submission_id: @comment.submission_id } }
     end
 
     assert_redirected_to comment_url(Comment.last)
@@ -20,7 +20,7 @@ class CommentsControllerTest < ActionDispatch::IntegrationTest
 
   test "should fail to create comment" do
     assert_no_difference('Comment.count') do
-      post comments_url, params: { comment: { parent_id: @comment.parent_id, submission_id: @comment.submission_id } }
+      post comments_url, params: { comment: { parent_id: @comment.id, submission_id: @comment.submission_id } }
     end
 
     assert_response :unprocessable_entity
