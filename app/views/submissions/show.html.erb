@@ -6,9 +6,9 @@
   <%= link_to("Delete Submission", submission_path(@submission), class: 'btn btn-danger btn-sm', data: { confirm: 'Are you sure?'}, method: :delete) %>
 </div>
 
-<% if @submission.comments.size > 0 %>
+<% if @submission.root_comments.size > 0 %>
   <div>
     Comments:<br>
-    <%= render @submission.comments %>
+    <%= render @submission.root_comments.reverse %>
   </div>
 <% end %>
