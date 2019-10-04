@@ -4,7 +4,7 @@ class SubmissionsController < ApplicationController
   # GET /
   # GET /
   def index
-    @submissions = Submission.all
+    @submissions = Submission.all.reverse
   end
 
   # GET /submissions/1
