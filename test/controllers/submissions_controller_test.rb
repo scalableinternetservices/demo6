@@ -23,6 +23,14 @@ class SubmissionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to submission_url(Submission.last)
   end
 
+  test "should fails to create submission" do
+    assert_no_difference('Submission.count') do
+      post submissions_url, params: { submission: { title: @submission.title, url: @submission.url } }
+    end
+
+    assert_response :unprocessable_entity
+  end
+
   test "should show submission" do
     get submission_url(@submission)
     assert_response :ok

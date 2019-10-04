@@ -18,6 +18,14 @@ class CommentsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to comment_url(Comment.last)
   end
 
+  test "should fail to create comment" do
+    assert_no_difference('Comment.count') do
+      post comments_url, params: { comment: { parent_id: @comment.parent_id, submission_id: @comment.submission_id } }
+    end
+
+    assert_response :unprocessable_entity
+  end
+
   test "should destroy comment" do
     assert_difference('Comment.count', -1) do
       delete comment_url(@comment)

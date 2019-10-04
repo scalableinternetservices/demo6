@@ -18,6 +18,14 @@ class CommunitiesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to community_url(Community.last)
   end
 
+  test "should fail to create community" do
+    assert_no_difference('Community.count') do
+      post communities_url, params: { community: { name: @community.name } }
+    end
+
+    assert_response :unprocessable_entity
+  end
+
   test "should show community" do
     get community_url(@community)
     assert_response :ok
