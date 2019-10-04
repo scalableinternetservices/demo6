@@ -1,8 +1,7 @@
-<p id="notice"><%= notice %></p>
+<h1><%= @community.name %></h1>
 
-<p>
-  <strong>Name:</strong>
-  <%= @community.name %>
-</p>
+<%= render partial: 'listing', locals: { submissions: @community.submissions.reverse_order } %>
 
-<%= link_to 'Back', communities_path %>
+<%= link_to 'New Submission', new_submission_path(community_id: @community.id), class: 'btn btn-primary' %>
+
+<%= link_to("Delete Community", community_path(@community), class: 'btn btn-danger', data: { confirm: 'Are you sure?'}, method: :delete) %>
