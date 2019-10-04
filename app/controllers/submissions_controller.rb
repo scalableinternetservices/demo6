@@ -4,7 +4,7 @@ class SubmissionsController < ApplicationController
   # GET /
   # GET /
   def index
-    @submissions = Submission.all.reverse
+    @submissions = Submission.includes(:comments).includes(:community).all.reverse
   end
 
   # GET /submissions/1
