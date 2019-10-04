@@ -12,7 +12,7 @@ class CommunitiesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create community" do
     assert_difference('Community.count') do
-      post communities_url, params: { community: { name: @community.name } }
+      post communities_url, params: { community: { name: @community.name + '2' } }
     end
 
     assert_redirected_to community_url(Community.last)
