@@ -1,32 +1,10 @@
-<%= form_with(model: comment, local: true) do |form| %>
-  <% if comment.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(comment.errors.count, "error") %> prohibited this comment from being saved:</h2>
+<h2>Submission: <%= @comment.submission.title %></h2>
+<%= "<h3>Parent: #{@comment.parent.message}</h3>".html_safe if @comment.parent %>
 
-      <ul>
-        <% comment.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+<%= simple_form_for(@comment) do |form| %>
+  <%= form.hidden_field :submission_id, value: @comment.submission.id %>
+  <%= form.hidden_field :parent_id, value: @comment.parent.id if @comment.parent %>
 
-  <div class="field">
-    <%= form.label :message %>
-    <%= form.text_area :message %>
-  </div>
-
-  <div class="field">
-    <%= form.label :submission_id %>
-    <%= form.text_field :submission_id %>
-  </div>
-
-  <div class="field">
-    <%= form.label :parent_id %>
-    <%= form.text_field :parent_id %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+  <%= form.input :message, input_html: { class: 'form-control' }, wrapper_html: { class: 'form-group' } %>
+  <%= form.button :submit, class: 'btn-primary btn-sm' %>
 <% end %>

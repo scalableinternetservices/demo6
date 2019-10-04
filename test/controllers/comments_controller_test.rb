@@ -6,7 +6,7 @@ class CommentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get new" do
-    get new_comment_url
+    get new_comment_url, params: { comment: { submission_id: @comment.submission_id } }
     assert_response :ok
   end
 
@@ -15,7 +15,7 @@ class CommentsControllerTest < ActionDispatch::IntegrationTest
       post comments_url, params: { comment: { message: @comment.message, parent_id: @comment.id, submission_id: @comment.submission_id } }
     end
 
-    assert_redirected_to comment_url(Comment.last)
+    assert_redirected_to submission_url(Comment.last.submission)
   end
 
   test "should fail to create comment" do
@@ -27,10 +27,11 @@ class CommentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should destroy comment" do
+    submission = @comment.submission
     assert_difference('Comment.count', -1) do
       delete comment_url(@comment)
     end
 
-    assert_redirected_to comments_url
+    assert_redirected_to submission_url(submission)
   end
 end
