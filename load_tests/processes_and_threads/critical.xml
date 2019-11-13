@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<!DOCTYPE tsung SYSTEM "/usr/local/share/tsung/tsung-1.0.dtd" [] >
+<tsung loglevel="notice">
+  <!-- Client side setup -->
+  <clients>
+    <client host="localhost" use_controller_vm="true" maxusers="15000"/>
+  </clients>
+
+  <!-- Server side setup -->
+  <servers>
+    <server host="bboe.bua3k4fnrj.us-west-2.elasticbeanstalk.com" port="80" type="tcp"/>
+  </servers>
+
+  <load>
+    <arrivalphase phase="1" duration="20" unit="second">
+      <users arrivalrate="16" unit="second"/>
+    </arrivalphase>
+    <arrivalphase phase="2" duration="20" unit="second">
+      <users arrivalrate="17" unit="second"/>
+    </arrivalphase>
+    <arrivalphase phase="3" duration="20" unit="second">
+      <users arrivalrate="18" unit="second"/>
+    </arrivalphase>
+    <arrivalphase phase="4" duration="20" unit="second">
+      <users arrivalrate="19" unit="second"/>
+    </arrivalphase>
+    <arrivalphase phase="5" duration="20" unit="second">
+      <users arrivalrate="20" unit="second"/>
+    </arrivalphase>
+    <arrivalphase phase="6" duration="20" unit="second">
+      <users arrivalrate="21" unit="second"/>
+    </arrivalphase>
+    <arrivalphase phase="7" duration="20" unit="second">
+      <users arrivalrate="22" unit="second"/>
+    </arrivalphase>
+    <arrivalphase phase="8" duration="20" unit="second">
+      <users arrivalrate="23" unit="second"/>
+    </arrivalphase>
+  </load>
+
+  <options>
+    <!-- Set idle connection timeout to 60 seconds -->
+    <option name="idle_timeout" value="60000"/>
+    <!-- Set connection timeout to 60 seconds -->
+    <option name="global_ack_timeout" value="60000"/>
+  </options>
+
+  <sessions>
+    <session name="http-example" probability="100" type="ts_http">
+
+      <!-- start out at the dashboard. -->
+      <request>
+        <match do="abort" when="match">HTTP/1.1 502</match>
+        <match do="abort_test" when="nomatch">HTTP/1.1 200</match>
+        <http url="/"/>
+      </request>
+
+      <!-- wait for up to 1 second, user is looking at posts -->
+      <thinktime random="true" value="1"/>
+
+      <!-- visit the new community form, as a user would do  -->
+      <request>
+        <match do="abort" when="match">HTTP/1.1 502</match>
+        <match do="abort_test" when="nomatch">HTTP/1.1 200</match>
+        <dyn_variable name="authenticity_token"/>
+        <http url="/communities/new"/>
+      </request>
+
+      <!-- wait for up to 2 seconds, user is filling out new community form -->
+      <thinktime random="true" value="2"/>
+
+      <!-- replace + with %2b in authenticity token -->
+      <setdynvars sourcetype="eval"
+                  code='fun({Pid,DynVars})->
+                        {ok,Val}=ts_dynvars:lookup(authenticity_token,DynVars),
+                        re:replace(Val,"[+]","%2B",[global, {return,list}]) end.'>
+        <var name="authenticity_token" />
+      </setdynvars>
+
+      <!-- create a random number to make a unique community name -->
+      <setdynvars sourcetype="random_number" start="1" end="999999999">
+        <var name="random_community_name" />
+      </setdynvars>
+
+      <!-- post to /communities to create a community.
+           remember the url of the created community so we can delete it later -->
+      <request subst="true">
+        <match do="abort" when="match">HTTP/1.1 502</match>
+        <match do="abort_test" when="nomatch">HTTP/1.1 302</match>
+        <dyn_variable name="created_community_id" re="[Ll]ocation: http://.*/communities/(.*)\r"/>
+        <http
+          contents="authenticity_token=%%_authenticity_token%%&amp;community%5Bname%5D=community_name_%%_random_community_name%%&amp;commit=Create+Community"
+          method="POST"
+          url="/communities"/>
+      </request>
+
+      <!-- visit the show community page as the browser would be redirected to -->
+      <request subst="true">
+        <match do="abort" when="match">HTTP/1.1 502</match>
+        <match do="abort_test" when="nomatch">HTTP/1.1 200</match>
+        <http url="/communities/%%_created_community_id%%"/>
+      </request>
+
+      <!-- wait for up to 1 second, user is decided what to do next -->
+      <thinktime random="true" value="1"/>
+
+      <!-- visit the new submission form, as a user would do.  -->
+      <request>
+        <match do="abort" when="match">HTTP/1.1 502</match>
+        <match do="abort_test" when="nomatch">HTTP/1.1 200</match>
+        <dyn_variable name="authenticity_token"/>
+        <http url="/submissions/new"/>
+      </request>
+
+      <!-- wait for up to 2 seconds, user is filling out new submission form -->
+      <thinktime random="true" value="2"/>
+
+      <!-- replace + with %2b in authenticity token -->
+      <setdynvars sourcetype="eval"
+                  code='fun({Pid,DynVars})->
+                        {ok,Val}=ts_dynvars:lookup(authenticity_token,DynVars),
+                        re:replace(Val,"[+]","%2B",[global, {return,list}]) end.'>
+        <var name="authenticity_token" />
+      </setdynvars>
+
+      <!-- create a new submission in the community we just created -->
+      <setdynvars sourcetype="random_number" start="1" end="999999999">
+        <var name="random_submission_name" />
+      </setdynvars>
+
+      <request subst="true">
+        <match do="abort" when="match">HTTP/1.1 502</match>
+        <match do="abort_test" when="nomatch">HTTP/1.1 302</match>
+        <dyn_variable name="created_submission_id" re="[Ll]ocation: http://.*/submissions/(.*)\r"/>
+        <http
+          contents="authenticity_token=%%_authenticity_token%%&amp;submission%5Btitle%5D=link_%%_random_submission_name%%&amp;submission%5Burl%5D=http%3A%2F%2Fwww.article.com%2F%%_random_submission_name%%&amp;submission%5Bcommunity_id%5D=%%_created_community_id%%&amp;commit=Create+Submission"
+          method="POST"
+          url="/submissions"/>
+      </request>
+
+      <!-- visit the show show submission page as the browser would be redirected to -->
+      <request subst="true">
+        <match do="abort" when="match">HTTP/1.1 502</match>
+        <match do="abort_test" when="nomatch">HTTP/1.1 200</match>
+        <dyn_variable name="authenticity_token" xpath="/html/head/meta[@name='csrf-token']/@content"/>
+        <http url="/submissions/%%_created_submission_id%%"/>
+      </request>
+
+      <!-- replace + with %2b in authenticity token -->
+      <setdynvars sourcetype="eval"
+                  code='fun({Pid,DynVars})->
+                        {ok,Val}=ts_dynvars:lookup(authenticity_token,DynVars),
+                        re:replace(Val,"[+]","%2B",[global, {return,list}]) end.'>
+        <var name="authenticity_token" />
+      </setdynvars>
+
+      <!-- wait for up to 1 second, user decides to delete submission -->
+      <thinktime random="true" value="1"/>
+
+      <!-- delete the submission we just created -->
+      <request subst="true">
+        <match do="abort" when="match">HTTP/1.1 502</match>
+        <match do="abort_test" when="nomatch">HTTP/1.1 302</match>
+        <http contents="authenticity_token=%%_authenticity_token%%" method="DELETE" url="/submissions/%%_created_submission_id%%"/>
+      </request>
+
+      <!-- wait for up to 1 second, user decides to delete community -->
+      <thinktime random="true" value="1"/>
+
+      <!-- visit the show community page as the browser would be redirected to -->
+      <request subst="true">
+        <match do="abort" when="match">HTTP/1.1 502</match>
+        <match do="abort_test" when="nomatch">HTTP/1.1 200</match>
+        <dyn_variable name="authenticity_token" xpath="/html/head/meta[@name='csrf-token']/@content"/>
+        <http url="/communities/%%_created_community_id%%"/>
+      </request>
+
+      <!-- replace + with %2b in authenticity token -->
+      <setdynvars sourcetype="eval"
+                  code='fun({Pid,DynVars})->
+                        {ok,Val}=ts_dynvars:lookup(authenticity_token,DynVars),
+                        re:replace(Val,"[+]","%2B",[global, {return,list}]) end.'>
+        <var name="authenticity_token" />
+      </setdynvars>
+
+      <!-- Uncomment the following to debug print your dynamic variables  -->
+      <!--
+      <setdynvars sourcetype="eval" code="fun( {Pid, DynVars} ) ->
+        io:format([126, $p, 126, $n, 126, $n], [DynVars]),
+        ok end.">
+        <var name="dump" />
+      </setdynvars>
+      -->
+
+      <!-- delete the community we created -->
+      <request subst="true">
+        <match do="abort" when="match">HTTP/1.1 502</match>
+        <match do="abort_test" when="nomatch">HTTP/1.1 302</match>
+        <http contents="authenticity_token=%%_authenticity_token%%" method="DELETE" url="/communities/%%_created_community_id%%"/>
+      </request>
+    </session>
+  </sessions>
+</tsung>
