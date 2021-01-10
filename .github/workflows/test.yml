@@ -3,6 +3,7 @@ name: Test
 on:
   push:
     branches:
+      - database_optimizations
       - main
   pull_request:
     branches:
