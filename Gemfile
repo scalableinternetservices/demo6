@@ -21,6 +21,7 @@ gem 'jbuilder'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
+gem 'activerecord-import'
 gem 'simple_form'
 gem 'validate_url'
 
