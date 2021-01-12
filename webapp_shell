@@ -1,0 +1,6 @@
+#!/bin/sh
+export $(sudo cat /opt/elasticbeanstalk/deployment/env | xargs)
+
+cd /var/app/current
+sudo -E -u webapp bash
+cd -
